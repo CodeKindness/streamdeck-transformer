@@ -84,17 +84,15 @@ var counterAction = {
     websocket.send(JSON.stringify(json));
   },
 
-  SetInputSettings: function (context, settings, payload) {
-    console.log(settings);
+  SetInputSettings: function (context, payload) {
+    let settings = {};
     let results = {};
 
-    if (settings != null) {
-      results = settings;
+    if (settings != null && payload.sdpi_collection != null) {
+      // results = settings;
+      results[payload.sdpi_collection.key] = payload.sdpi_collection.value;
+      this.SetSettings(context, results);
     }
-
-    results[payload.sdpi_collection.key] = payload.sdpi_collection.value;
-
-    this.SetSettings(context, results);
   },
 
   SetSettings: function (context, settings) {
@@ -108,7 +106,10 @@ var counterAction = {
   }
 };
 
-function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo) {
+// This function is called when the plugin is loaded
+// @param [JSON] inInfo Contains information about application, plugin, devices.
+function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo, inActionInfo) {
+  console.log(inActionInfo);
   pluginUUID = inPluginUUID
 
   // Open the web socket
@@ -154,10 +155,8 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
       var coordinates = jsonPayload['coordinates'];
       counterAction.onWillAppear(context, settings, coordinates);
     } else if (event == "sendToPlugin") {
-      var jsonPayload = jsonObj['payload'];
-      var settings = jsonPayload['settings'];
-      var coordinates = jsonPayload['coordinates'];
-      counterAction.SetInputSettings(context, settings, jsonPayload);
+      let jsonPayload = jsonObj['payload'];
+      counterAction.SetInputSettings(context, jsonPayload);
     }
   };
 
