@@ -1,0 +1,41 @@
+{
+  "Actions": [
+    {
+      "Icon": "actionIcon", 
+      "Name": "Transformer",
+      "States": [
+        {
+          "Image": "actionDefaultImage",
+          "TitleAlignment": "middle", 
+          "FontSize": "16"
+        }
+      ], 
+      "SupportedInMultiActions": false,
+      "Tooltip": "How many times did you get pwned today? Keep track with this counter.", 
+      "UUID": "com.codekindness.transformer.action"
+    }
+  ], 
+  "SDKVersion": 2,
+  "Author": "Michael Minter",
+  "CodePath": "index.html",
+  "PropertyInspectorPath": "index_pi.html",
+  "Description": "Track the number of times you press a key.", 
+  "Name": "Transformer",
+  "Icon": "pluginIcon", 
+  "URL": "https://www.github.com/CodeKindness/streamdeck-transformer",
+  "Version": "0.1.0",
+  "OS": [
+    {
+        "Platform": "mac", 
+        "MinimumVersion" : "10.11"
+    },
+    {
+        "Platform": "windows", 
+        "MinimumVersion" : "10"
+    }
+  ],
+  "Software": 
+    {
+        "MinimumVersion" : "4.1"
+    }
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>com.codekindness.transformer PI</title>
+  <meta charset="utf-8"/>
+	<link rel="stylesheet" href="css/sdpi.css">
+</head>
+
+<body>
+	<div class="sdpi-wrapper">
+		<div class="sdpi-item" id="your_name">
+			<div class="sdpi-item-label">Replace</div>
+			<input class="sdpi-item-value" type="text" id="replaceInput" value="" placeholder="\$([A-Z]+)">
+		</div>
+
+		<div class="sdpi-item" id="your_name_required" title="This field lets you enter an IP-Address. The little exclamation mark changes to a checkmark, if the condition is met (e.g. you entered an IP-address.).">
+			<div class="sdpi-item-label">Text</div>
+			<input class="sdpi-item-value" id="selectionTextInput" value="" placeholder="https://tradingview.com/symbols/${1}" required>
+		</div>
+
+		<div class="sdpi-item">
+			<details class="message info">
+				<summary>Limits are inclusive</summary>
+			</details>
+		</div>
+
+		<details>
+			<summary>License</summary>
+			<p>All icons are taken from Icons8</p>
+			<button class="sdpi-item-value" id="btOpenFontAwesome">Icons8</button>
+		</details>
+	</div>
+
+	<script src="js/index_pi.js"></script>
+	<script>
+		/** Step 1: Subscribe to the 'connected' event
+		 * and call your own initialization method.
+		 * The connected - event is emitted, when StreamDeck
+		 * has established a connection.
+		 * The 'connected' event carries a JSON object containing
+		 * necessary information about the connection and the
+		 * initial data.
+		 */
+		// var uuid,
+		// 	actionInfo,
+		// 	context,
+		// 	lang;
+		//
+		// var elements = {
+		// 	lowerLimit: null,
+		// 	upperLimit: null,
+		// }
+		//
+		// $SD.on('connected', (jsonObj) => connected(jsonObj));
+		// $SD.on('sendToPropertyInspector', (jsonObj) => receivedDataFromPlugin(jsonObj));
+		//
+		// function receivedDataFromPlugin(jsonObj) {
+		// 	console.log('receivedDataFromPlugin: ', jsonObj);
+		// 	if (jsonObj.event === "didReceiveSettings") {
+		// 		if (jsonObj.payload.settings.hasOwnProperty('lowerLimit')) {
+		// 			console.log("Got lower limit value: " + jsonObj.payload.settings.lowerLimit);
+		// 			elements.lowerLimit.value = jsonObj.payload.settings.lowerLimit;
+		// 		}
+		// 		if (jsonObj.payload.settings.hasOwnProperty('upperLimit')) {
+		// 			console.log("Got upper limit value: " + jsonObj.payload.settings.upperLimit);
+		// 			elements.upperLimit.value = jsonObj.payload.settings.upperLimit;
+		// 		}
+		//
+		// 	} else if (jsonObj && jsonObj.payload) {
+		// 		if (jsonObj.payload.hasOwnProperty('lowerLimit')) {
+		// 			console.log("Got lower limit value: " + jsonObj.payload.lowerLimit);
+		// 			elements.lowerLimit.value = jsonObj.payload.lowerLimit;
+		// 		}
+		// 		if (jsonObj.payload.hasOwnProperty('upperLimit')) {
+		// 			console.log("Got upper limit value: " + jsonObj.payload.upperLimit);
+		// 			elements.upperLimit.value = jsonObj.payload.upperLimit;
+		// 		}
+		// 	}
+		// }
+		//
+		// function connected(jsonObj) {
+		// 	uuid = jsonObj.uuid;
+		// 	actionInfo = jsonObj.actionInfo.action;
+		// 	context = jsonObj.actionInfo.context;
+		//
+		//
+		// 	elements.lowerLimit = document.querySelector("#lowerLimit");
+		// 	elements.upperLimit = document.querySelector("#upperLimit");
+		//
+		// 	const btOpen = document.querySelector("#btOpenFontAwesome");
+		// 	btOpen.addEventListener("click", () => {
+		// 		$SD.api.openUrl(context, "https://icons8.com/");
+		// 	});
+		//
+		// 	// request some data from the plugin (e.g. the current values)
+		// 	$SD.api.sendToPlugin(uuid, actionInfo, {DATAREQUEST: true});
+		//
+		// 	document.querySelector('.sdpi-wrapper').classList.remove('hidden');
+		// };
+		//
+		// function sendValueToPlugin(value, param) {
+		// 	console.log("SENDING VALUE TO PLUGIN: ", value, uuid, actionInfo);
+		// 	if ($SD && $SD.connection) {
+		// 		var payload = {};
+		// 		if (param) {
+		// 			payload[param] = value;
+		// 		}
+		// 		$SD.api.sendToPlugin(uuid, actionInfo, payload);
+		// 	}
+		// }
+	</script>
+</body>
+
+</html>

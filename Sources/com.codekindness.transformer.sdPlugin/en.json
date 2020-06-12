@@ -1,0 +1,8 @@
+{
+  "Description": "Track the number of times you press a key.", 
+  "Name": "Transformer",
+  "com.codekindness.transformer.action": {
+    "Name": "Transformer",
+    "Tooltip": "How many times did you get pwned today? Keep track with this counter."
+  }
+}
