@@ -7,90 +7,112 @@ var counterAction = {
 
   // context: instance of an action.
   onKeyDown: function (context, settings, coordinates, userDesiredState) {
-    timer = setTimeout(function () {
-      var updatedSettings = {};
-      updatedSettings["keyPressCounter"] = -1;
-
-      counterAction.SetSettings(context, updatedSettings);
-      counterAction.SetTitle(context, 0);
-    }, 1500);
+    // timer = setTimeout(function () {
+    //   var updatedSettings = {};
+    //   updatedSettings["keyPressCounter"] = -1;
+    //
+    //   counterAction.SetSettings(context, updatedSettings);
+    //   counterAction.SetTitle(context, 0);
+    // }, 1500);
   },
 
   onKeyUp: function (context, settings, coordinates, userDesiredState) {
 
-    clearTimeout(timer);
-
-    var keyPressCounter = 0;
-
-    if (settings != null && settings.hasOwnProperty('keyPressCounter')) {
-      keyPressCounter = settings["keyPressCounter"];
-    }
-
-    keyPressCounter++;
-
-    updatedSettings = {};
-    updatedSettings["keyPressCounter"] = keyPressCounter;
-
-    this.SetSettings(context, updatedSettings);
-
-    this.SetTitle(context, keyPressCounter);
+    // clearTimeout(timer);
+    //
+    // var keyPressCounter = 0;
+    //
+    // if (settings != null && settings.hasOwnProperty('keyPressCounter')) {
+    //   keyPressCounter = settings["keyPressCounter"];
+    // }
+    //
+    // keyPressCounter++;
+    //
+    // updatedSettings = {};
+    // updatedSettings["keyPressCounter"] = keyPressCounter;
+    //
+    // this.SetSettings(context, updatedSettings);
+    //
+    // this.SetTitle(context, keyPressCounter);
 
     this.transform(context, settings, coordinates);
   },
 
   // occurs when action appears in canvas area
   onWillAppear: function (context, settings, coordinates) {
-    var keyPressCounter = 0;
-
-    if (settings != null && settings.hasOwnProperty('keyPressCounter')) {
-      keyPressCounter = settings["keyPressCounter"];
-    }
-
-    this.SetTitle(context, keyPressCounter);
+    // var keyPressCounter = 0;
+    //
+    // if (settings != null && settings.hasOwnProperty('keyPressCounter')) {
+    //   keyPressCounter = settings["keyPressCounter"];
+    // }
+    //
+    // this.SetTitle(context, keyPressCounter);
   },
 
   transform: function (context, settings, coordinates) {
-    // var pasteText = document.querySelector("#output");
-    // pasteText.focus();
-    // document.execCommand("paste");
-    // console.log(pasteText.textContent);
+    let clipboard   = '$DIS'; // TODO: this.getClipboardContents();
+    let regex       = new RegExp(settings.replaceInput || '');
+    let replacement = settings.selectionTextInput;
+    let result      = clipboard;
 
-    let clipboard = 'clipboard text'; // navigator.clipboard.readText();
-    let regex = '.*';
-    let replacement = clipboard;
-    let result = clipboard;
-
-    if (settings != null && settings.hasOwnProperty('replaceInput')) {
-      regex = RegExp(settings.replaceInput);
-
-      replacement = clipboard.replace(regex, settings['replaceInput']);
-      result = settings['selectionTextInput'].replace(/\$\{[0-9]+\}/, replacement);
+    // will evaluate to true if value is not: null, undefined, NaN, empty string (""), 0, false
+    if (clipboard) {
+      clipboard = clipboard.replace(regex, '');
     }
+
+    if (replacement) {
+      result = replacement.replace(/\$\{[0-9]+\}/, clipboard);
+    }
+
     console.log(result);
     return result;
   },
 
-  SetTitle: function (context, keyPressCounter) {
-    console.log(keyPressCounter);
-    var json = {
-      "event": "setTitle",
-      "context": context,
-      "payload": {
-        "title": "" + keyPressCounter,
-        "target": DestinationEnum.HARDWARE_AND_SOFTWARE
-      }
-    };
+  getClipboardContents: async function () {
+    if (!navigator.clipboard) {
+      // Clipboard API not available
+      return;
+    }
 
-    websocket.send(JSON.stringify(json));
+    navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
+      // If permission to read the clipboard is granted or if the user will
+      // be prompted to allow it, we proceed.
+      if (result.state === 'granted' || result.state === 'prompt') {
+        navigator.clipboard.readText()
+          .then(text => {
+            console.log('Pasted content: ', text);
+            return 'clipboard content';
+          })
+          .catch(err => {
+            console.error(err.message, err);
+            // Document is not focused. DOMException
+            return 'clipboard fucked';
+          });
+      }
+    });
   },
 
+  // SetTitle: function (context, keyPressCounter) {
+  //   console.log(keyPressCounter);
+  //   var json = {
+  //     "event": "setTitle",
+  //     "context": context,
+  //     "payload": {
+  //       "title": "" + keyPressCounter,
+  //       "target": DestinationEnum.HARDWARE_AND_SOFTWARE
+  //     }
+  //   };
+  //
+  //   websocket.send(JSON.stringify(json));
+  // },
+
   SetInputSettings: function (context, payload) {
-    let settings = {};
     let results = {};
 
-    if (settings != null && payload.sdpi_collection != null) {
-      // results = settings;
-      results[payload.sdpi_collection.key] = payload.sdpi_collection.value;
+    if (payload.sdpi_collection != null) {
+      results['replaceInput'] = payload['replaceInput'];
+      results['selectionTextInput'] = payload['selectionTextInput'];
+
       this.SetSettings(context, results);
     }
   },
@@ -109,7 +131,6 @@ var counterAction = {
 // This function is called when the plugin is loaded
 // @param [JSON] inInfo Contains information about application, plugin, devices.
 function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo, inActionInfo) {
-  console.log(inActionInfo);
   pluginUUID = inPluginUUID
 
   // Open the web socket
@@ -131,6 +152,19 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 
   websocket.onmessage = function (evt) {
     console.log('websocket.onmessage', evt);
+    // console.log(evt.currentTarget);
+    // console.log(navigator);
+    // console.log(navigator.clipboard);
+    // console.log(navigator.clipboard.readText());
+
+    // navigator.clipboard.readText()
+    //   .then(text => {
+    //     console.log('Pasted content: ', text);
+    //   })
+    //   .catch(err => {
+    //     console.error('Failed to read clipboard contents: ', err);
+    //   });
+
     // Received message from Stream Deck
     var jsonObj = JSON.parse(evt.data);
     var event = jsonObj['event'];
@@ -157,6 +191,34 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
     } else if (event == "sendToPlugin") {
       let jsonPayload = jsonObj['payload'];
       counterAction.SetInputSettings(context, jsonPayload);
+    } else if (event == 'deviceDidConnect') {
+      counterAction.getClipboardContents();
+
+      // navigator.permissions.query({
+      //   name: 'clipboard-read'
+      // }).then(permissionStatus => {
+      //   // Will be 'granted', 'denied' or 'prompt':
+      //   console.log(permissionStatus.state);
+      //
+      //   // Listen for changes to the permission state
+      //   permissionStatus.onchange = () => {
+      //     console.log(permissionStatus.state);
+      //   };
+      // });
+
+      // navigator.clipboard.readText()
+      //   .then(text => {
+      //     console.log('Pasted content: ', text);
+      //   })
+      //   .catch(err => {
+      //     console.error('Failed to read clipboard contents: ', err);
+      //   });
+    } else if (event == 'propertyInspectorDidAppear') {
+      let action  = jsonObj['action']; // "com.codekindness.transformer.action"
+      let context = jsonObj['context']; // "A04D5B463BDFB12E88315D4C1D8E78B6"
+      let device  = jsonObj['device']; // "DDC80152FF8613EBCFF6DFA14142FE10"
+      let event   = jsonObj['event']; // "propertyInspectorDidAppear"
+      // send settings?
     }
   };
 

@@ -41,6 +41,7 @@ function connectElgatoStreamDeckSocket (inPort, inUUID, inRegisterEvent, inInfo,
   };
 
   websocket.onmessage = function (evt) {
+    console.log(evt);
     // Received message from Stream Deck
     var jsonObj = JSON.parse(evt.data);
     var event = jsonObj['event'];
@@ -56,6 +57,7 @@ function connectElgatoStreamDeckSocket (inPort, inUUID, inRegisterEvent, inInfo,
   };
 }
 
+// https://developer.elgato.com/documentation/stream-deck/sdk/property-inspector/#pi-lifecycle-events
 window.addEventListener('message',function(ev) {
   console.log('External window received message:  ', ev.data, typeof ev.data);
   if (ev.data === 'initPropertyInspector') {
@@ -63,10 +65,10 @@ window.addEventListener('message',function(ev) {
   }
 },false);
 
-function openMeExternal() {
-  window.xtWindow = window.open('index_pi.html', "PI Samples");
-  setTimeout(() => window.xtWindow.postMessage('initPropertyInspector', '*'), 1500);
-}
+// function openMeExternal() {
+//   window.xtWindow = window.open('index_pi.html', "PI Samples");
+//   setTimeout(() => window.xtWindow.postMessage('initPropertyInspector', '*'), 1500);
+// }
 
 function initPropertyInspector(initDelay) {
   prepareDOMElements(document);
@@ -75,7 +77,7 @@ function initPropertyInspector(initDelay) {
    * so let the DOM get constructed first and then
    * inject the carousel */
   setTimeout(function () {
-    initCarousel();
+    // initCarousel();
     initToolTips();
   }, initDelay || 100);
 }

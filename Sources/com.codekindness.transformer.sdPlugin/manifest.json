@@ -6,7 +6,7 @@
       "States": [
         {
           "Image": "actionDefaultImage",
-          "TitleAlignment": "middle", 
+          "TitleAlignment": "top",
           "FontSize": "16"
         }
       ], 
