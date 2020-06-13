@@ -65,7 +65,7 @@ var counterAction = {
     }
 
     console.log(result);
-    return result;
+    return result; // TODO: send to STDOUT
   },
 
   getClipboardContents: async function () {
