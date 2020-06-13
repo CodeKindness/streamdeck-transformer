@@ -51,22 +51,21 @@ var counterAction = {
 
   transform: function (context, settings, coordinates) {
     let clipboard   = '$DIS'; // TODO: this.getClipboardContents();
-    let regex       = new RegExp(settings.replaceInput || '');
-    let replacement = settings.selectionTextInput || 'https://tradingview.com/symbols/${1}';
+    let regex       = new RegExp(settings.replaceInput || '\\$([A-Z]+)'); // TODO: set to empty
+    let replacement = settings.selectionTextInput || 'https://tradingview.com/symbols/$1';
     let result      = clipboard;
 
     // will evaluate to true if value is not: null, undefined, NaN, empty string (""), 0, false
     if (clipboard) {
-      clipboard = clipboard.replace(regex, '');
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/n
+      result = clipboard.replace(regex, replacement);
     }
 
-    if (replacement) {
-      result = replacement.replace(/\$\{[0-9]+\}/, clipboard);
-    }
+    // if (replacement) {
+    //   result = replacement.replace(/\$\{[0-9]+\}/, clipboard);
+    // }
 
-    this.openUrl(result);
-    console.log(result);
-    return result; // TODO: send to STDOUT
+    this.openUrl(result); // TODO: send to STDOUT
   },
 
   getClipboardContents: async function () {

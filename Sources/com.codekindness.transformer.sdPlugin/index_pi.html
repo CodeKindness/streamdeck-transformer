@@ -10,22 +10,25 @@
 <body>
 	<div class="sdpi-wrapper">
 		<div class="sdpi-item" id="your_name">
+			<div class="sdpi-item-label">Search</div>
+			<input class="sdpi-item-value" type="text" id="replaceInput" name="replaceInput" value="" placeholder="\$([A-Z]+)" onchange="sendValueToPlugin(event.target.value, 'replaceInput')">
+		</div>
+
+<!--		<div class="sdpi-item" id="with-wrapper">-->
+<!--			<div class="sdpi-item-label">Replace</div>-->
+<!--			<input class="sdpi-item-value" type="text" id="withInput" name="withInput" value="" placeholder="" onchange="sendValueToPlugin(event.target.value, 'withInput')">-->
+<!--		</div>-->
+
+		<div class="sdpi-item" id="your_name_required" title="$1..$9, indicate the results of the corresponding matching parentheses in the regular expression pattern.">
 			<div class="sdpi-item-label">Replace</div>
-			<input class="sdpi-item-value" type="text" id="replaceInput" name="replaceInput" value="" placeholder="\$" onchange="sendValueToPlugin(event.target.value, 'replaceInput')">
+			<input class="sdpi-item-value" id="selectionTextInput" name="selectionTextInput" value="" placeholder="https://tradingview.com/symbols/$1" required onchange="sendValueToPlugin(event.target.value, 'selectionTextInput')">
 		</div>
 
-		<!-- TODO: With -->
-
-		<div class="sdpi-item" id="your_name_required" title="This field lets you enter an IP-Address. The little exclamation mark changes to a checkmark, if the condition is met (e.g. you entered an IP-address.).">
-			<div class="sdpi-item-label">Into</div>
-			<input class="sdpi-item-value" id="selectionTextInput" name="selectionTextInput" value="" placeholder="https://tradingview.com/symbols/${1}" required onchange="sendValueToPlugin(event.target.value, 'selectionTextInput')">
-		</div>
-
-		<div class="sdpi-item">
-			<details class="message info">
-				<summary>Limits are inclusive</summary>
-			</details>
-		</div>
+<!--		<div class="sdpi-item">-->
+<!--			<details class="message info">-->
+<!--				<summary>Required Fields</summary>-->
+<!--			</details>-->
+<!--		</div>-->
 
 		<details>
 			<summary>License</summary>
