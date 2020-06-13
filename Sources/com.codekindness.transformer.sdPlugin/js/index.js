@@ -52,7 +52,7 @@ var counterAction = {
   transform: function (context, settings, coordinates) {
     let clipboard   = '$DIS'; // TODO: this.getClipboardContents();
     let regex       = new RegExp(settings.replaceInput || '');
-    let replacement = settings.selectionTextInput;
+    let replacement = settings.selectionTextInput || 'https://tradingview.com/symbols/${1}';
     let result      = clipboard;
 
     // will evaluate to true if value is not: null, undefined, NaN, empty string (""), 0, false
@@ -64,6 +64,7 @@ var counterAction = {
       result = replacement.replace(/\$\{[0-9]+\}/, clipboard);
     }
 
+    this.openUrl(result);
     console.log(result);
     return result; // TODO: send to STDOUT
   },
@@ -124,6 +125,16 @@ var counterAction = {
       "payload": settings
     };
 
+    websocket.send(JSON.stringify(json));
+  },
+
+  openUrl: function (url) {
+    let json = {
+      "event": "openUrl",
+      "payload": {
+        "url": url
+      }
+    };
     websocket.send(JSON.stringify(json));
   }
 };
