@@ -10,7 +10,7 @@
           "FontSize": "16"
         }
       ], 
-      "SupportedInMultiActions": false,
+      "SupportedInMultiActions": true,
       "Tooltip": "How many times did you get pwned today? Keep track with this counter.", 
       "UUID": "com.codekindness.transformer.action"
     }
