@@ -23,7 +23,7 @@
   "Name": "Transformer",
   "Icon": "pluginIcon", 
   "URL": "https://www.github.com/CodeKindness/streamdeck-transformer",
-  "Version": "0.1.0",
+  "Version": "0.2.0",
   "OS": [
     {
         "Platform": "mac", 

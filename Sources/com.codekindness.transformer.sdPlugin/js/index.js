@@ -50,9 +50,9 @@ var counterAction = {
   },
 
   transform: function (context, settings, coordinates) {
-    let clipboard   = '$DIS'; // TODO: this.getClipboardContents();
-    let regex       = new RegExp(settings.replaceInput || '\\$([A-Z]+)'); // TODO: set to empty
-    let replacement = settings.selectionTextInput || 'https://tradingview.com/symbols/$1';
+    let clipboard   = this.getClipboard();
+    let regex       = new RegExp(settings.replaceInput || '.*');
+    let replacement = settings.selectionTextInput || '';
     let result      = clipboard;
 
     // will evaluate to true if value is not: null, undefined, NaN, empty string (""), 0, false
@@ -61,50 +61,84 @@ var counterAction = {
       result = clipboard.replace(regex, replacement);
     }
 
-    // if (replacement) {
-    //   result = replacement.replace(/\$\{[0-9]+\}/, clipboard);
-    // }
-
-    this.openUrl(result); // TODO: send to STDOUT
+    this.setClipboard(result);
   },
 
-  getClipboardContents: async function () {
-    if (!navigator.clipboard) {
-      // Clipboard API not available
-      return;
-    }
-
-    navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
-      // If permission to read the clipboard is granted or if the user will
-      // be prompted to allow it, we proceed.
-      if (result.state === 'granted' || result.state === 'prompt') {
-        navigator.clipboard.readText()
-          .then(text => {
-            console.log('Pasted content: ', text);
-            return 'clipboard content';
-          })
-          .catch(err => {
-            console.error(err.message, err);
-            // Document is not focused. DOMException
-            return 'clipboard fucked';
-          });
-      }
-    });
-  },
-
-  // SetTitle: function (context, keyPressCounter) {
-  //   console.log(keyPressCounter);
-  //   var json = {
-  //     "event": "setTitle",
-  //     "context": context,
-  //     "payload": {
-  //       "title": "" + keyPressCounter,
-  //       "target": DestinationEnum.HARDWARE_AND_SOFTWARE
-  //     }
-  //   };
+  // getClipboard: async function () {
+  //   if (!navigator.clipboard) {
+  //     // Clipboard API not available
+  //     return;
+  //   }
   //
-  //   websocket.send(JSON.stringify(json));
+  //   navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
+  //     // If permission to read the clipboard is granted or if the user will
+  //     // be prompted to allow it, we proceed.
+  //     if (result.state === 'granted' || result.state === 'prompt') {
+  //       navigator.clipboard.readText()
+  //         .then(text => {
+  //           console.log('Pasted content: ', text);
+  //           return 'clipboard content';
+  //         })
+  //         .catch(err => {
+  //           console.error(err.message, err);
+  //           // Document is not focused. DOMException
+  //           return 'clipboard fucked';
+  //         });
+  //     }
+  //   });
   // },
+
+  getClipboard: function () {
+    // Get the text field
+    let copyText = document.getElementById("clipboardDummy");
+
+    // Show field
+    copyText.style.display = "";
+
+    // Select the text field
+    copyText.select();
+
+    // Set value
+    document.execCommand("paste");
+
+    // Hide field
+    copyText.style.display = "none";
+
+    return copyText.value;
+  },
+
+  setClipboard: function (text) {
+    // Get the text field
+    let copyText = document.getElementById("clipboardDummy");
+
+    // Show field
+    copyText.style.display = "";
+
+    // Set Text
+    copyText.value = text;
+
+    // Select the text field
+    copyText.select();
+
+    // Copy the text inside the text field
+    document.execCommand("copy");
+
+    // Hide field
+    copyText.style.display = "none";
+  },
+
+  SetTitle: function (context, text) {
+    var json = {
+      "event": "setTitle",
+      "context": context,
+      "payload": {
+        "title": "" + text,
+        "target": DestinationEnum.HARDWARE_AND_SOFTWARE
+      }
+    };
+
+    websocket.send(JSON.stringify(json));
+  },
 
   SetInputSettings: function (context, payload) {
     let results = {};
@@ -161,20 +195,6 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
   };
 
   websocket.onmessage = function (evt) {
-    console.log('websocket.onmessage', evt);
-    // console.log(evt.currentTarget);
-    // console.log(navigator);
-    // console.log(navigator.clipboard);
-    // console.log(navigator.clipboard.readText());
-
-    // navigator.clipboard.readText()
-    //   .then(text => {
-    //     console.log('Pasted content: ', text);
-    //   })
-    //   .catch(err => {
-    //     console.error('Failed to read clipboard contents: ', err);
-    //   });
-
     // Received message from Stream Deck
     var jsonObj = JSON.parse(evt.data);
     var event = jsonObj['event'];
@@ -202,34 +222,15 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
       let jsonPayload = jsonObj['payload'];
       counterAction.SetInputSettings(context, jsonPayload);
     } else if (event == 'deviceDidConnect') {
-      counterAction.getClipboardContents();
-
-      // navigator.permissions.query({
-      //   name: 'clipboard-read'
-      // }).then(permissionStatus => {
-      //   // Will be 'granted', 'denied' or 'prompt':
-      //   console.log(permissionStatus.state);
-      //
-      //   // Listen for changes to the permission state
-      //   permissionStatus.onchange = () => {
-      //     console.log(permissionStatus.state);
-      //   };
-      // });
-
-      // navigator.clipboard.readText()
-      //   .then(text => {
-      //     console.log('Pasted content: ', text);
-      //   })
-      //   .catch(err => {
-      //     console.error('Failed to read clipboard contents: ', err);
-      //   });
+      counterAction.getClipboard();
     } else if (event == 'propertyInspectorDidAppear') {
       let action  = jsonObj['action']; // "com.codekindness.transformer.action"
       let context = jsonObj['context']; // "A04D5B463BDFB12E88315D4C1D8E78B6"
       let device  = jsonObj['device']; // "DDC80152FF8613EBCFF6DFA14142FE10"
       let event   = jsonObj['event']; // "propertyInspectorDidAppear"
-      // send settings?
     }
+
+    console.log(event, evt);
   };
 
   websocket.onclose = function () {
