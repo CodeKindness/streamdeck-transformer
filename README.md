@@ -10,7 +10,9 @@ Also see, [Stream Deck SDK](https://developer.elgato.com/documentation/stream-de
 - Cross-platform (macOS, Windows)
 - Localized
 
-![](screenshot.png)
+<p align="center">
+    <img width="460" src="https://github.com/CodeKindness/streamdeck-transformer/blob/master/screenshot.jpg">
+</p>
 
 # Installation
 
