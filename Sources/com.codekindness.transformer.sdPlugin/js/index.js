@@ -1,52 +1,15 @@
 var websocket = null;
 var pluginUUID = null;
 var DestinationEnum = Object.freeze({"HARDWARE_AND_SOFTWARE": 0, "HARDWARE_ONLY": 1, "SOFTWARE_ONLY": 2})
-var timer;
 var counterAction = {
   type: "com.codekindness.transformer.action",
 
-  // context: instance of an action.
   onKeyDown: function (context, settings, coordinates, userDesiredState) {
-    // timer = setTimeout(function () {
-    //   var updatedSettings = {};
-    //   updatedSettings["keyPressCounter"] = -1;
-    //
-    //   counterAction.SetSettings(context, updatedSettings);
-    //   counterAction.SetTitle(context, 0);
-    // }, 1500);
-  },
-
-  onKeyUp: function (context, settings, coordinates, userDesiredState) {
-
-    // clearTimeout(timer);
-    //
-    // var keyPressCounter = 0;
-    //
-    // if (settings != null && settings.hasOwnProperty('keyPressCounter')) {
-    //   keyPressCounter = settings["keyPressCounter"];
-    // }
-    //
-    // keyPressCounter++;
-    //
-    // updatedSettings = {};
-    // updatedSettings["keyPressCounter"] = keyPressCounter;
-    //
-    // this.SetSettings(context, updatedSettings);
-    //
-    // this.SetTitle(context, keyPressCounter);
-
     this.transform(context, settings, coordinates);
   },
 
-  // occurs when action appears in canvas area
   onWillAppear: function (context, settings, coordinates) {
-    // var keyPressCounter = 0;
-    //
-    // if (settings != null && settings.hasOwnProperty('keyPressCounter')) {
-    //   keyPressCounter = settings["keyPressCounter"];
-    // }
-    //
-    // this.SetTitle(context, keyPressCounter);
+    // ...
   },
 
   transform: function (context, settings, coordinates) {
@@ -201,35 +164,31 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
     var action = jsonObj['action'];
     var context = jsonObj['context'];
 
-    if (event == "keyDown") {
-      var jsonPayload = jsonObj['payload'];
-      var settings = jsonPayload['settings'];
-      var coordinates = jsonPayload['coordinates'];
-      var userDesiredState = jsonPayload['userDesiredState'];
-      counterAction.onKeyDown(context, settings, coordinates, userDesiredState);
-    } else if (event == "keyUp") {
-      var jsonPayload = jsonObj['payload'];
-      var settings = jsonPayload['settings'];
-      var coordinates = jsonPayload['coordinates'];
-      var userDesiredState = jsonPayload['userDesiredState'];
-      counterAction.onKeyUp(context, settings, coordinates, userDesiredState);
-    } else if (event == "willAppear") {
-      var jsonPayload = jsonObj['payload'];
-      var settings = jsonPayload['settings'];
-      var coordinates = jsonPayload['coordinates'];
-      counterAction.onWillAppear(context, settings, coordinates);
-    } else if (event == "sendToPlugin") {
-      let jsonPayload = jsonObj['payload'];
-      counterAction.SetInputSettings(context, jsonPayload);
-    } else if (event == 'deviceDidConnect') {
-      counterAction.getClipboard();
-    } else if (event == 'propertyInspectorDidAppear') {
-      let action  = jsonObj['action']; // "com.codekindness.transformer.action"
-      let context = jsonObj['context']; // "A04D5B463BDFB12E88315D4C1D8E78B6"
-      let device  = jsonObj['device']; // "DDC80152FF8613EBCFF6DFA14142FE10"
-      let event   = jsonObj['event']; // "propertyInspectorDidAppear"
+    switch(event) {
+      case 'keyDown':
+        // When the user presses a key.
+        // action, event, context, device, payload (settings, coordinates, state, userDesiredState, isInMultiAction)
+        var jsonPayload = jsonObj['payload'];
+        var settings = jsonPayload['settings'];
+        var coordinates = jsonPayload['coordinates'];
+        var userDesiredState = jsonPayload['userDesiredState'];
+        counterAction.onKeyDown(context, settings, coordinates, userDesiredState);
+        break;
+      case 'willAppear':
+        // When an instance of an action is displayed on the Stream Deck.
+        // action, event, context, device, payload (settings, coordinates, state, isInMultiAction)
+        var jsonPayload = jsonObj['payload'];
+        var settings = jsonPayload['settings'];
+        var coordinates = jsonPayload['coordinates'];
+        counterAction.onWillAppear(context, settings, coordinates);
+        break;
+      case 'sendToPlugin':
+        // When the Property Inspector sends a sendToPlugin event.
+        // action, event, context, payload
+        var jsonPayload = jsonObj['payload'];
+        counterAction.SetInputSettings(context, jsonPayload);
+        break;
     }
-
     console.log(event, evt);
   };
 
